@@ -1,0 +1,431 @@
+\documentclass[10pt]{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amssymb} % Provides additional symbols
+
+\title{DataCourseWork2}
+\author{Abdullah Haitham Maghrabifetaih\\ 35160055}
+\date{April 2024}
+\usepackage{geometry}
+\geometry{top=1in, bottom=1in, left=1in, right=1in}
+
+
+
+\usepackage{listings} % Required for formatting code
+\usepackage{color} % Required for custom colors
+
+
+\usepackage{listings} % Required for formatting code
+
+% Colors defined for code listings
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% Code listing style
+\lstdefinestyle{codestyle}{
+  backgroundcolor=\color{backcolour}, 
+  commentstyle=\color{black},
+  keywordstyle=\color{black},
+  numberstyle=\small\color{codegray},
+  stringstyle=\color{codegray},
+  basicstyle=\ttfamily\normalsize,
+  breakatwhitespace=false,
+  breaklines=true,
+  captionpos=b,
+  keepspaces=true,
+  numbers=left,
+  numbersep=5pt,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=2
+}
+
+\lstset{style=codestyle}
+
+
+
+
+
+
+
+
+\begin{document}
+
+\maketitle
+
+\newpage
+\section{The Relational Model}
+\subsection{EX1}
+
+\begin{table}[h!]
+\caption{Relational model attributes}
+\centering 
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Column Name} & \textbf{Data Type} \\ \hline
+
+dateRep & TEXT \\ \hline
+day & INTEGER \\ \hline
+month & INTEGER \\ \hline
+year & INTEGER \\ \hline
+cases & INTEGER \\ \hline
+deaths & INTEGER \\ \hline
+countriesAndTerritories & TEXT \\ \hline
+geoId & TEXT \\ \hline
+countryTerritoryCode & TEXT \\ \hline
+popData2020 & INTEGER \\ \hline
+continentExp & TEXT \\ \hline
+\end{tabular}
+\label{tab:covidreporting}
+\end{table}
+
+\subsection{EX2}
+
+
+
+\begin{itemize}
+\renewcommand\labelitemi{-}
+ \item Date attributes day, month, year are always non-null for accurate date tracking.
+ \item Population data popData2020 isn't used as a key due to potential overlap across countries.
+ \item Each unique identifier, including geoId and countryTerritoryCode, corresponds to one specific geographical area.
+ \item Cases and deaths are recorded as numerical values, or may not be reported null.
+ \item The countriesAndTerritories field consistently lists countries, excluding territories.
+ \item Some countries span multiple continents, which is represented by the continentExp attribute.
+ below are the FDs based of the Assumptions 
+\end{itemize}
+
+
+\begin{itemize}
+\newpage
+    \item geoId $\rightarrow$ countriesAndTerritories
+    \item geoId $\rightarrow$ countryTerritoryCode
+    \item geoId $\rightarrow$ popData2020
+    \item geoId $\rightarrow$ continentExp
+    \item countryTerritoryCode $\rightarrow$ countriesAndTerritories
+    \item countryTerritoryCode $\rightarrow$ geoId
+    \item countryTerritoryCode $\rightarrow$ popData2020
+    \item countryTerritoryCode $\rightarrow$ continentExp
+    \item \{dateRep, geoId\} $\rightarrow$ cases
+    \item \{dateRep, geoId\} $\rightarrow$ deaths
+    \item \{dateRep, countryTerritoryCode\} $\rightarrow$ cases
+    \item \{dateRep, countryTerritoryCode\} $\rightarrow$ deaths
+\end{itemize}
+
+
+
+
+\subsection{EX3}
+Following is a list of possible candidate keys for the dataset based on functional dependencies:
+
+\begin{table}[h!]
+\caption{ Candidate Keys}
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Candidate Key} & \textbf{Justification} \\
+\hline
+geoId & Uniquely determines multiple attributes \\ 
+\hline
+countryTerritoryCode & Interchangeable with geoId, determines the same attributes \\ 
+\hline
+\ dateRep, geoId\ & Unique daily record for cases and deaths \\
+\hline
+\ dateRep, countryTerritoryCode\ & Equivalent to \ dateRep, geoId\ for daily records \\
+\hline
+\end{tabular}
+\label{tab:candidate_keys}
+\end{table}
+
+
+\subsection{EX4}
+\paragraph{} The primary goal in choosing our dataset's key was to effectively differentiate each record. Emphasis was placed on system compatibility and ease of use. We selected \texttt{dateRep} as a key attribute because it consolidates date information into one field, simplifying data management and reducing complexity with external systems. This uniformity is crucial for ensuring consistent data integration across different systems. For geographical identification, \texttt{geoId} was chosen over \texttt{countriesAndTerritories} or \texttt{countryTerritoryCode} due to its short, widely recognized format. This choice helps reduce data processing errors and enhances integration with geographic information systems.
+\paragraph{} The combination of \texttt{dateRep} and \texttt{geoId} as our primary key effectively tracks pandemic events, ensuring each entry is uniquely identified by its date and location, thus maximizing data retrieval and accuracy. 
+
+\raggedright
+\begin{table}[h]
+ \caption{Chosen Primary Key for the Dataset}
+ \centering 
+ \begin{tabular}{|c|} % creating one column
+  \hline %inserting double-line
+  \textbf{Primary Key Configuration} \\ [1ex]
+  \hline % inserts single-line
+  \(dateRep, geoId\)\\ [1ex] 
+  \hline
+ \end{tabular}
+\end{table}
+ 
+
+
+
+\section{Normalisation}
+\subsection{EX5}
+
+\subsection*{Partial-Key Dependencies}
+\begin{itemize}
+  \item \texttt{dateRep} $\rightarrow$ \texttt{day, month, year}
+  \item \texttt{geoId} $\rightarrow$ \texttt{countryterritoryCode,countriesAndterritories, popData2020, continentExp}
+\end{itemize}
+
+\subsection*{Decomposition into Relations}
+Decomposing the original relation into the following smaller relations is our suggested way to attain Second Normal Form (2NF) and get rid of partial-key dependencies:
+
+\subsubsection*{Relation 1: Date Information}
+\textbf{Primary Key:} \texttt{dateRep} \\
+\textbf{Attributes:} Includes \texttt{day}, \texttt{month}, \texttt{year} \\
+The elements of the reporting date are stored in this relation, with each component defined solely by dataRep and
+
+\subsubsection*{Relation 2: Country Information}
+\textbf{Primary Key:} \texttt{geoId} \\
+\textbf{Attributes:} Includes \texttt{countriesAndTerritories}, \texttt{countryTerritoryCode}, \texttt{popData2020}, \texttt{continentExp} \\
+This connection records information about the geographical identity of the data, whereby every attribute depends entirely on geoId in order to function.
+
+\subsubsection*{Core Relation: Event Data}
+\textbf{Composite Primary Key:} (\texttt{dateRep}, \texttt{geoId}) \\
+\textbf{Attributes:} Includes \texttt{cases}, \texttt{deaths} \\
+By connecting comprehensive cases and death reports with the reporting date and the geographic identifier, this key connection preserves crucial event data.
+
+\subsection{EX6}
+
+
+\paragraph{Date Information:}
+\begin{itemize}
+    \item \textbf{Primary Key:} \texttt{dateRep}
+    \item \textbf{Attributes:} \texttt{day}, \texttt{month}, \texttt{year} (INTEGER)
+\end{itemize}
+
+\paragraph{Country Information:}
+\begin{itemize}
+    \item \textbf{Primary Key:} \texttt{geoId}
+    \item \textbf{Attributes:} \texttt{countriesAndTerritories}, \texttt{countryTerritoryCode} (TEXT); \texttt{popData2020} (INTEGER), \texttt{continentExp} (TEXT)
+\end{itemize}
+
+\paragraph{Core Event Data:}
+\begin{itemize}
+    \item \textbf{Composite Primary Key:} (\texttt{dateRep}, \texttt{geoId})
+    \item \textbf{Attributes:} \texttt{cases}, \texttt{deaths} (INTEGER)
+\end{itemize}
+
+These relations ensure no partial dependencies, maintaining data integrity and query efficiency.
+
+\subsection{EX7}
+In our newly formed relations aiming for Second Normal Form, we check for transitive dependencies, where an attribute indirectly relies on the primary key through another attribute.
+
+\paragraph{Analysis:}
+\begin{itemize}
+    \item \textbf{Date Information:} No transitive dependencies exist. All attributes (\texttt{day}, \texttt{month}, \texttt{year}) directly rely on the primary key \texttt{dateRep}.
+    \item \textbf{Country Information:} No transitive dependencies are observed. Attributes (\texttt{countriesAndTerritories}, \texttt{countryTerritoryCode}, \texttt{popData2020}, \texttt{continentExp}) all directly depend on \texttt{geoId}.
+    \item \textbf{Core Event Data:} Similarly, no transitive dependencies are found. Both \texttt{cases} and \texttt{deaths} directly depend on the composite primary key (\texttt{dateRep}, \texttt{geoId}).
+\end{itemize}
+
+
+\subsection{EX8}
+
+Checking for transitive dependencies:
+
+\paragraph{Date Information:}
+All attributes directly depend on the primary key \texttt{dateRep}, so no transitive dependencies exist.
+
+\paragraph{Country Information:}
+Similarly, all attributes directly depend on the primary key \texttt{geoId}, avoiding transitive dependencies.
+
+\paragraph{Core Event Data:}
+Both \texttt{cases} and \texttt{deaths} directly depend on the composite primary key (\texttt{dateRep}, \texttt{geoId}), eliminating transitive dependencies.
+
+Since all relations are already in 3NF, no further decomposition is needed, ensuring data integrity and minimizing redundancy.
+
+
+\subsection{EX9}
+
+Already, our relationships are in BCNF. There is a primary key for each relation, and a candidate key for each determinant. Between candidate keys, there are no significant functional dependencies. Therefore, in order to accomplish BCNF, additional normalization is not required.
+
+
+
+\section{Modelling}
+\subsection{EX10}
+\textbf{Command 1:} Open terminal.
+\begin{verbatim}
+sqlite3 coronavirus.db
+\end{verbatim}
+
+\textbf{Command 2:} Set CSV mode.
+\begin{verbatim}
+.mode csv
+\end{verbatim}
+
+\textbf{Command 3:} Create dataset table.
+\begin{verbatim}
+CREATE TABLE dataset (
+    dateRep TEXT NOT NULL,
+    day INTEGER NOT NULL,
+    month INTEGER NOT NULL,
+    year INTEGER NOT NULL,
+    cases INTEGER NOT NULL,
+    deaths INTEGER NOT NULL,
+    countriesAndTerritories TEXT NOT NULL,
+    geoId TEXT NOT NULL,
+    countryTerritoryCode TEXT NOT NULL,
+    popData2020 INTEGER NOT NULL,
+    continentExp TEXT NOT NULL
+);
+\end{verbatim}
+
+\textbf{Command 4:} Import CSV data.
+\begin{verbatim}
+.import  dataset.csv dataset
+\end{verbatim}
+
+\textbf{Command 5:} Set output file for SQL dump.
+\begin{verbatim}
+.output dataset.sql
+\end{verbatim}
+
+\textbf{Command 6:} Dump database to file.
+\begin{verbatim}
+.dump
+\end{verbatim}
+
+\textbf{Command 7:} Exit SQLite.
+\begin{verbatim}
+.exit
+\end{verbatim}
+
+
+\subsection{EX11}
+\begin{lstlisting}[language=SQL]
+CREATE TABLE IF NOT EXISTS DateInformation (
+    dateRep TEXT PRIMARY KEY,
+    day INTEGER NOT NULL,
+    month INTEGER NOT NULL,
+    year INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS CountryInformation (
+    geoId TEXT PRIMARY KEY,
+    countryTerritoryCode TEXT NOT NULL,
+    countriesAndTerritories TEXT NOT NULL,
+    popData2020 INTEGER NOT NULL,
+    continentExp TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS EventData (
+    dateRep TEXT,
+    geoId TEXT,
+    cases INTEGER NOT NULL,
+    deaths INTEGER NOT NULL,
+    PRIMARY KEY (dateRep, geoId),
+    FOREIGN KEY (dateRep) REFERENCES DateInformation(dateRep),
+    FOREIGN KEY (geoId) REFERENCES CountryInformation(geoId)
+);
+
+\end{lstlisting}
+
+
+\subsection{EX12}
+\begin{lstlisting}[language=SQL]
+
+INSERT INTO DateInformation (dateRep, day, month, year)
+SELECT DISTINCT dateRep, day, month, year
+FROM dataset;
+
+INSERT INTO CountryInformation (geoId, countryterritoryCode, continentExp, countriesAndTerritories, popData2020)
+SELECT DISTINCT geoId, countryterritoryCode, continentExp, countriesAndTerritories, popData2020
+FROM dataset;
+
+INSERT INTO EventData (dateRep, geoId, cases, deaths)
+SELECT DISTINCT dateRep, geoId, cases, deaths
+FROM dataset;
+\end{lstlisting}
+
+
+\subsection{EX13} 
+\begin{verbatim}
+
+sqlite3 coronavirus.db < dataset.sql
+sqlite3 coronavirus.db < ex11.sql
+sqlite3 coronavirus.db < ex12.sql
+\end{verbatim}
+The above commands have successfully worked
+
+
+\section{Querying}
+\subsection{EX14}
+\begin{lstlisting}[language=SQL]
+SELECT sum(cases) as totalcasese,
+       sum(deaths) as totaldeaths
+From EventData;
+\end{lstlisting}
+
+\subsection{EX15}
+\begin{lstlisting}[language=SQL]
+SELECT dateRep,cases
+FROM EventData
+NATURAL JOIN DateInformation
+WHERE geoId = 'UK'
+ORDER BY year,month,day asc ;
+\end{lstlisting}
+
+
+\subsection{EX16}
+\begin{lstlisting}[language=SQL]
+SELECT CountryInformation.countriesAndTerritories,daterep,cases,deaths
+FROM EventData
+NATURAL JOIN CountryInformation
+NATURAL JOIN  DateInformation
+ORDER BY countriesAndTerritories asc;
+\end{lstlisting}
+
+
+\subsection{EX17}
+\begin{lstlisting}[language=SQL]
+SELECT
+    c.countriesAndTerritories AS CountryName,
+    ROUND(SUM(d.cases) * 100.0 / c.popData2020, 2) AS PercentCasesOfPopulation,
+    ROUND(SUM(d.deaths) * 100.0 / c.popData2020, 2) AS PercentDeathsOfPopulation
+FROM
+    dataset d
+JOIN
+    CountryInformation c ON d.geoId = c.geoId
+GROUP BY
+    c.countriesAndTerritories, c.popData2020
+ORDER BY
+    c.countriesAndTerritories;
+\end{lstlisting}
+
+
+\subsection{EX18}
+\begin{lstlisting}[language=SQL]
+SELECT
+    c.countriesAndTerritories AS CountryName,
+    ROUND(SUM(d.deaths) * 100.0 / SUM(d.cases), 2) AS `Percent Deaths of Country Cases`
+FROM
+    dataset d
+JOIN
+    CountryInformation c ON d.geoId = c.geoId
+GROUP BY
+    c.countriesAndTerritories
+HAVING
+    SUM(d.cases) > 0
+ORDER BY
+    `Percent Deaths of Country Cases` DESC
+LIMIT 10;
+
+\end{lstlisting}
+
+\subsection{EX19}
+\begin{lstlisting}[language=SQL]
+SELECT
+    dateRep AS Date,
+    SUM(deaths) OVER (ROWS UNBOUNDED PRECEDING) AS `Cumulative UK Deaths`,
+    SUM(cases) OVER (ROWS UNBOUNDED PRECEDING) AS `Cumulative UK Cases`
+FROM
+    EventData
+WHERE
+    geoId = 'UK'
+ORDER BY
+    date(Date) ASC ;
+
+\end{lstlisting}
+
+
+
+\end{document}
